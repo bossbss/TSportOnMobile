@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="wirat.transreceive">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/transporticonbig"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/transporticon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_label"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Order.OrderActivity"
+            android:label="@string/title_activity_order"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/title_activity_setting"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Tracking.TrakingActivity"
+            android:label="@string/title_activity_traking"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Order.PriceListActivity"
+            android:label="@string/title_activity_price_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TrackingFail.TrackingFailActivity"
+            android:label="@string/title_activity_tracking_fail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BlueToothPrinterApp"
+            android:label="@string/title_activity_blue_tooth_printer_app"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BTDeviceList"
+            android:label="@string/title_activity_blue_tooth_printer_app"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" />
+        <activity
+            android:name=".BTDeviceActivity"
+            android:label="@string/title_activity_btdevice"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+    </application>
+
+</manifest>

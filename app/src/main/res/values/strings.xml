@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">TransReceive</string>
+    <string name="app_label">TSPort</string>
+    <string name="title_activity_main">หน้าหลัก</string>
+    <string name="title_activity_order">เพิ่มใหม่</string>
+    <string name="title_activity_settings">การตั้งค่า</string>
+    <string name="title_activity_setting">การตั้งค่า</string>
+    <string name="title_activity_traking">ติดตามพัสดุ</string>
+    <string name="action_settings">Setting</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_price_list">เช็คราคา</string>
+    <string name="title_activity_tracking_fail">พัสดุบันทึกส่งแล้ว</string>
+    <string name="title_activity_blue_tooth_printer_app">BlueToothPrinterApp</string>
+    <string name="title_activity_btdevice">BTDeviceActivity</string>
+
+</resources>

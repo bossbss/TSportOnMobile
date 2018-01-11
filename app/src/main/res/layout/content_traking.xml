@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="wirat.transreceive.Tracking.TrakingActivity"
+    tools:showIn="@layout/activity_traking">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/main_header_selector"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/SPId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@layout/rounded_border_edittext"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="ระบุเลขที่ SP"
+            android:imeOptions="actionDone"
+            android:inputType="textCapCharacters"
+            android:textSize="25dp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:text="บริการโดย "
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/courier_code_Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:text=""
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/BtnShearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/primary_round_bule"
+                android:drawableLeft="@drawable/searchicon"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="#fff"
+                android:text="ค้นหา." />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:padding="5dp"
+                    android:text="เลขที่บริการ "
+                    android:textColor="#fff"
+                    android:textSize="18dp"
+                    android:typeface="monospace" />
+
+                <TextView
+                    android:id="@+id/courier_tracking_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text=""
+                    android:textColor="#fff"
+                    android:textSize="18dp"
+                    android:typeface="monospace" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:padding="5dp"
+                    android:text="วันที่"
+                    android:textColor="#fff"
+                    android:textSize="18dp"
+                    android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/datetime_shipping"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:text=""
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="ปณ. ต้นทาง/ปลายทาง"
+                    android:textColor="#fff"
+                    android:textSize="18dp"
+                    android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/origin_postcode_destination_postcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="00000/00000"
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/ListTrack"
+            style="@style/Widget.AppCompat.ListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="#7dffffff"
+            android:listSelector="@drawable/list_selector">
+
+        </ListView>
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

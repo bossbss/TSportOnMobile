@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "988061439529",
+    "firebase_url": "https://transport-57ed1.firebaseio.com",
+    "project_id": "transport-57ed1",
+    "storage_bucket": "transport-57ed1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988061439529:android:6c16d22f435f0db6",
+        "android_client_info": {
+          "package_name": "wirat.transreceive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988061439529-sgnmkog3q8pkcgeo1eva48gclk92vd87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQYrmD1TBejehFrOi67ZtZsreZ3LuNmNE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
