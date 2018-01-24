@@ -169,7 +169,8 @@ public class SendItemFragment extends Fragment {
 
                     dialogBuilder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            File file = saveBitMap(getActivity(), bitmapf);
+                            String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + System.currentTimeMillis() + ".jpg";
+                            File file = saveBitMap(getActivity(), bitmapf,filename);
                             if (file != null) {
                                 Toast.makeText(getActivity(), "Drawing saved to the gallery!", Toast.LENGTH_LONG);
                             } else {
@@ -221,6 +222,7 @@ public class SendItemFragment extends Fragment {
                     ArrayList<String> textImg = new ArrayList<String>();
                     String Courier_tracking_code = "";
                     String tracking_code = "";
+                    String Courier_code = "";
                     int index = -1;
                     index++;
                     textImg.add(index, "------------------------------------------");
@@ -231,6 +233,7 @@ public class SendItemFragment extends Fragment {
                             objectList.get(i).setMarkSelect(false);
                             Courier_tracking_code = objectList.get(i).getCourier_tracking_code().trim();
                             tracking_code = objectList.get(i).getTracking_code();
+                            Courier_code = objectList.get(i).getCourier_code();
 
                             index++;
                             textImg.add(index, "ผู้รับ:"+objectList.get(i).getTo().getName());
@@ -253,12 +256,20 @@ public class SendItemFragment extends Fragment {
                     index++;
                     textImg.add(index, "------------------------------------------");
 
+                    Bitmap bitmap = null;
                     /***Create Image***/
-                    View v = new CanvasSticker(getActivity(), textImg,Courier_tracking_code,tracking_code);
-                    Bitmap bitmap = Bitmap.createBitmap(800/*width*/, 450 /*height*/, Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    v.draw(canvas);
-
+                    if(Courier_code.equals("DHL")) {
+                        String photoPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/"+ Courier_tracking_code + ".jpg";
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        bitmap = BitmapFactory.decodeFile(photoPath, options);
+                    }
+                    else {
+                        View v = new CanvasSticker(getActivity(), textImg, Courier_tracking_code, tracking_code);
+                        bitmap = Bitmap.createBitmap(800/*width*/, 450 /*height*/, Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        v.draw(canvas);
+                    }
                     /***Show Image***/
                     final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
                     dialogBuilder.setIcon(R.drawable.applyicon);
@@ -273,7 +284,8 @@ public class SendItemFragment extends Fragment {
 
                     dialogBuilder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            File file = saveBitMap(getActivity(), bitmapf);
+                            String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + System.currentTimeMillis() + ".jpg";
+                            File file = saveBitMap(getActivity(), bitmapf,filename);
                             if (file != null) {
                                 Toast.makeText(getActivity(), "Drawing saved to the gallery!", Toast.LENGTH_LONG);
                             } else {
@@ -452,8 +464,7 @@ public class SendItemFragment extends Fragment {
         }
     }
 
-    private File saveBitMap(Context context, Bitmap bitmap) {
-        String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + System.currentTimeMillis() + ".jpg";
+    public static File saveBitMap(Context context, Bitmap bitmap,String filename) {
         File pictureFile = new File(filename);
         try {
             pictureFile.createNewFile();
@@ -462,14 +473,14 @@ public class SendItemFragment extends Fragment {
             oStream.flush();
             oStream.close();
         } catch (IOException e) {
-            Toast.makeText(getActivity(), "There was an issue saving the image.", Toast.LENGTH_LONG);
+            Toast.makeText(context, "There was an issue saving the image.", Toast.LENGTH_LONG);
         }
         scanGallery(context, pictureFile.getAbsolutePath());
         return pictureFile;
     }
 
     // used for scanning gallery
-    private void scanGallery(Context cntx, String path) {
+    public static void scanGallery(Context cntx, String path) {
         try {
             MediaScannerConnection.scanFile(cntx, new String[]{path}, null, new MediaScannerConnection.OnScanCompletedListener() {
                 public void onScanCompleted(String path, Uri uri) {

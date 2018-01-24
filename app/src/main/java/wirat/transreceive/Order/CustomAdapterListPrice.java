@@ -77,13 +77,15 @@ public class CustomAdapterListPrice extends BaseAdapter {
 
                 holder.courier_code_name.setText(Use.courier_Name);
                 //holder.price.setText(json_data.getString("price"));
-                holder.price.setText(String.valueOf(PriceListActivity.UpDatePriceList(Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][weight]")),holder.courier_code.getText().toString())));
+                holder.price.setText(String.valueOf(PriceListActivity.UpDatePriceList(holder.courier_code.getText().toString())));
                 holder.estimate_time.setText(json_data.getString("estimate_time"));
 
                 if(json_data.getString("courier_code").equals("THP"))
                     holder.Img.setImageResource(R.drawable.emslogo);
                 else if(json_data.getString("courier_code").equals("TP2"))
                     holder.Img.setImageResource(R.drawable.thailandpostlogo);
+                else if(json_data.getString("courier_code").equals("DHL"))
+                    holder.Img.setImageResource(R.drawable.dhl);
                 else
                     holder.Img.setImageResource(R.drawable.producticon);
             }

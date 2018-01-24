@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +16,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,8 +47,8 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
             parcel_name, from_name, from_address, from_district, from_state, from_province, from_postcode, from_tel, to_name, to_address, to_district, to_state, to_province, to_postcode, to_tel;
 
     TextView courier_code, courier_code_Name, tracking_code, courier_tracking_code, price;
-    Button Btnpricelist, BtnClarePurchase, BtnClareFrom,BtnClareTo;
-    ImageView BtnFromSearchName, BtnToSearchName, BtnFromSearchPos, BtnToSearchPos, BtnToSearchParcel;
+    Button Btnpricelist, BtnClarePurchase, BtnClareFrom, BtnClareTo;
+    ImageView BtnFromSearchName, BtnToSearchName, BtnFromSearchPos, BtnToSearchPos, BtnToSearchParcel, BtnCheckprice;
 
     public NewOrderFragment() {
         // Required empty public constructor
@@ -99,6 +99,7 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
         BtnClareFrom = (Button) V.findViewById(R.id.BtnClareFrom);
         BtnClareTo = (Button) V.findViewById(R.id.BtnClareTo);
 
+        BtnCheckprice = (ImageView) V.findViewById(R.id.BtnCheckPrice);
         BtnToSearchParcel = (ImageView) V.findViewById(R.id.BtnToSearchParcel);
         BtnFromSearchName = (ImageView) V.findViewById(R.id.BtnFromSearchName);
         BtnToSearchName = (ImageView) V.findViewById(R.id.BtnToSearchName);
@@ -159,6 +160,55 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
                         Toast.makeText(getActivity(),
                                 "ไม่พบชื่อที่ค้นหา",
                                 Toast.LENGTH_LONG).show();
+                } catch (Exception ex) {
+                    Toast.makeText(getActivity(),
+                            ex.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        BtnCheckprice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    PriceListActivity.UseConfirmParamiterValuse = new HashMap<String, String>();
+                    PriceListActivity.UseConfirmParamiterValuse.put("data[0][parcel][weight]", parcel_weight.getText().toString());
+                    PriceListActivity.UseConfirmParamiterValuse.put("data[0][parcel][width]", parcel_width.getText().toString());
+                    PriceListActivity.UseConfirmParamiterValuse.put("data[0][parcel][length]", parcel_length.getText().toString());
+                    PriceListActivity.UseConfirmParamiterValuse.put("data[0][parcel][height]", parcel_height.getText().toString());
+
+                    ArrayList<HashMap<String, String>> ItemArr = new ArrayList<HashMap<String, String>>();
+                    if(PriceListActivity.UpDatePriceList("TP2") != 0) {
+                        HashMap<String, String> item1 = new HashMap<String, String>();
+                        item1.put("courier_code", "TP2");
+                        ItemArr.add(item1);
+                    }
+                    if(PriceListActivity.UpDatePriceList("THP") != 0) {
+                        HashMap<String, String> item2 = new HashMap<String, String>();
+                        item2.put("courier_code", "THP");
+                        ItemArr.add(item2);
+                    }
+                    if(PriceListActivity.UpDatePriceList("DHL") != 0) {
+                        HashMap<String, String> item3 = new HashMap<String, String>();
+                        item3.put("courier_code", "DHL");
+                        ItemArr.add(item3);
+                    }
+
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                    dialogBuilder.setTitle("เช็คราคา");
+                    dialogBuilder.setIcon(R.drawable.applyicon);
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.alert_price_check, null);
+                    dialogBuilder.setView(dialogView);
+
+                    ListView listprice = (ListView) dialogView.findViewById(R.id.listprice);
+                    CustomAdapterCheckPrice itemsAdapter = new CustomAdapterCheckPrice(getActivity(), ItemArr);
+                    listprice.setAdapter(itemsAdapter);
+
+                    AlertDialog alertDialog = dialogBuilder.create();
+                    alertDialog.show();
+
                 } catch (Exception ex) {
                     Toast.makeText(getActivity(),
                             ex.getMessage(),
@@ -266,9 +316,8 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
             @Override
             public void onClick(View v) {
                 try {
-                    if(!courier_code.getText().toString().equals(""))
-                    {
-                        new AlertDialogManager().showAlertDialog(getActivity(),"ข้อมูลสั่งซื้อค้างอยู่","ลบข้อมูลการสั่งซื่อ",true);
+                    if (!courier_code.getText().toString().equals("")) {
+                        new AlertDialogManager().showAlertDialog(getActivity(), "ข้อมูลสั่งซื้อค้างอยู่", "ลบข้อมูลการสั่งซื่อ", true);
                         return;
                     }
                     if (parcel_name.getText().toString().equals("")
@@ -438,24 +487,33 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
         try {
             String Status = result.getString("status");
             if (Boolean.parseBoolean(Status)) {
-                JSONObject state = result.getJSONObject("data");
-                Iterator x = state.keys();
-                JSONArray the_json_array = new JSONArray();
-                while (x.hasNext()) {
-                    String key = (String) x.next();
-                    the_json_array.put(state.get(key));
-                }
-
-                JSONObject OneArray = the_json_array.optJSONObject(0);
-                Iterator y = OneArray.keys();
                 JSONArray json_array_Service = new JSONArray();
-                while (y.hasNext()) {
-                    String key = (String) y.next();
-                    json_array_Service.put(OneArray.get(key));
+                try {
+                    JSONObject state = result.getJSONObject("data");
+                    Iterator x = state.keys();
+                    JSONArray the_json_array = new JSONArray();
+                    while (x.hasNext()) {
+                        String key = (String) x.next();
+                        the_json_array.put(state.get(key));
+                    }
+
+                    JSONObject OneArray = the_json_array.optJSONObject(0);
+                    Iterator y = OneArray.keys();
+
+                    while (y.hasNext()) {
+                        String key = (String) y.next();
+                        json_array_Service.put(OneArray.get(key));
+                    }
+                }catch (Exception ex)
+                {
+                    new AlertDialogManager().showAlertDialog(getActivity(),"ตรวจสอบ","ระบุน้ำหนักไม่ถูกต้อง",true);
+                    Log.e("Error",ex.getMessage());
+                    return;
                 }
 
                 if (json_array_Service.length() > 0) {
                     PriceListActivity.ArryPrice = json_array_Service;
+                    PriceListActivity.UseConfirmParamiterValuse = new HashMap<String, String>();
                     PriceListActivity.UseConfirmParamiterValuse = UseConfirmParamiterValuse;
                     Intent PriceList = new Intent(getActivity(), PriceListActivity.class);
                     startActivityForResult(PriceList, 100);
@@ -473,7 +531,7 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
         public void onNavFragmentInteraction(String string);
     }
 
-    HashMap<String, String> UseConfirmParamiterValuse;
+    HashMap<String, String> UseConfirmParamiterValuse = new HashMap<String, String>();
 
     public void CkeckPrice() {
         try {

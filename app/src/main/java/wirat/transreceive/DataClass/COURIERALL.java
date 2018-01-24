@@ -94,9 +94,9 @@ public class COURIERALL{
                 break;
             case "DHL":
                 THP.courier_code = "DHL";
-                THP.courier_Name = "DHL";
+                THP.courier_Name = "DHL ประเทศไทย";
                 THP.courier_condition = "-ไม่มี";
-                THP.courier_Enable = false;
+                THP.courier_Enable = true;
                 break;
             case "LLM":
                 THP.courier_code = "LLM";

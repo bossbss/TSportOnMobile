@@ -74,6 +74,8 @@ public class CustomAdapterListTracking extends BaseAdapter {
                     holder.Img.setImageResource(R.drawable.emslogo);
                 else if(TrakingActivity.Tempcourier_code.equals("TP2"))
                     holder.Img.setImageResource(R.drawable.thailandpostlogo);
+                else if(TrakingActivity.Tempcourier_code.equals("DHL"))
+                    holder.Img.setImageResource(R.drawable.dhl1);
                 else
                     holder.Img.setImageResource(R.drawable.producticon);
             }

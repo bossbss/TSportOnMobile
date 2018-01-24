@@ -43,6 +43,19 @@ public class SettingActivity extends AppCompatActivity {
     public static String BTTYPE = "";
     public static String TSPORTENABLE = "";
 
+    public static String DHLID = "";
+    public static String URLLABEL = "";
+    public static String URLTOKEN = "";
+    public static String URLTRACKING = "";
+    public static String customerAccountId = "";
+    public static String handoverMethod = "";
+    public static String inlineLabelReturn = "";
+    public static String label = "";
+    public static String pickupAccountId = "";
+    public static String pickupAddress = "";
+    public static String soldToAccountId = "";
+
+
     EditText BtNamae,BtAddress,TSportId;
     private BluetoothDevice BTDevice;
 

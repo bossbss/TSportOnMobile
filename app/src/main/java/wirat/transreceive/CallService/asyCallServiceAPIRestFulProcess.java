@@ -60,7 +60,7 @@ public class asyCallServiceAPIRestFulProcess extends AsyncTask<Void, Void, JSONO
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(LinkService+"/"+nameMethod+"/");
-            httppost.addHeader("BOSS", "Bossbss7@gmail.com");
+            //httppost.addHeader("content-type", "application/json");
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
             for(Map.Entry<String, String> entry : ParamiterValues.entrySet()) {

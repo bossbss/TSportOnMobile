@@ -8,7 +8,7 @@ public class AlertDialogManager {
     public void showAlertDialog(Context context, String title, String message,Boolean Btnok) {
         final AlertDialog.Builder ad = new AlertDialog.Builder(context);
         ad.setTitle(title);
-        ad.setIcon(android.R.drawable.stat_sys_warning);
+        ad.setIcon(android.R.drawable.warningicon);
         if(Btnok)
             ad.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {

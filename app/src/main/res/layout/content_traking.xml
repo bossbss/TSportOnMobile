@@ -26,7 +26,7 @@
             android:background="@layout/rounded_border_edittext"
             android:ems="10"
             android:gravity="center"
-            android:hint="ระบุเลขที่ SP"
+            android:hint="ระบุเลขที่พัสดุ"
             android:imeOptions="actionDone"
             android:inputType="textCapCharacters"
             android:textSize="25dp" />

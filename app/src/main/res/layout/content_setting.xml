@@ -8,133 +8,350 @@
     tools:context="wirat.transreceive.SettingActivity"
     tools:showIn="@layout/activity_setting">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/main_header_selector"
+        android:fillViewport="true"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:gravity="top"
+            android:layout_height="match_parent"
+            android:background="@drawable/main_header_selector"
             android:orientation="vertical">
 
-            <LinearLayout
+            <!--TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:text="TSport ID"
-                    android:textColor="#fff" />
-
-                <EditText
-                    android:id="@+id/TSportId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@layout/rounded_border_edittext"
-                    android:padding="5dp"
-                    android:text=""
-                    android:textSize="15dp" />
-
-            </LinearLayout>
+                android:background= "@drawable/primary_round_buleshardown"
+                android:padding="10dp"
+                android:textColor="#fff"
+                android:textSize="20dp"
+                android:text="SH" /-->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:gravity="right"
-                android:orientation="horizontal">
+                android:layout_margin="20dp"
+                android:gravity="top"
+                android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/BtnSearchBT"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_selector"
-                    android:text="ค้นหา"
-                    android:textColor="#fff"
-                    android:textStyle="bold" />
+                    android:layout_margin="5dp"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="TSport ID"
+                        android:textColor="#fff" />
+
+                    <EditText
+                        android:id="@+id/TSportId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@layout/rounded_border_edittext"
+                        android:padding="5dp"
+                        android:text=""
+                        android:textSize="15dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/BtnSearchBT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_selector"
+                        android:text="ค้นหา"
+                        android:textColor="#fff"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="ชื่ออุปกรณ์"
+                        android:textColor="#fff" />
+
+                    <EditText
+                        android:id="@+id/BtNamae"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@layout/rounded_border_edittext"
+                        android:hint="ชื่ออุกรณ์"
+                        android:padding="5dp"
+                        android:textSize="15dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="BT Address"
+                        android:textColor="#fff" />
+
+                    <EditText
+                        android:id="@+id/BtAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@layout/rounded_border_edittext"
+                        android:hint="xx:xx:xx:xx:xx:xx"
+                        android:padding="5dp"
+                        android:textSize="15dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/BtnTestPrint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button_selector"
+                        android:text="ทดสอบพิมพ์"
+                        android:textColor="#fff"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
             </LinearLayout>
+
+            <!--TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background= "@drawable/primary_round_buleshardown"
+                android:padding="10dp"
+                android:textColor="#fff"
+                android:textSize="20dp"
+                android:text="DHL PickupAd/ReturnAd" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:text="ชื่ออุปกรณ์"
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
 
-                <EditText
-                    android:id="@+id/BtNamae"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="4"
+                        android:textColor="#fff"
+                        android:text="ชื่อ" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/from_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="2"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:hint="ชื่อ" />
+
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@layout/rounded_border_edittext"
-                    android:hint="ชื่ออุกรณ์"
-                    android:padding="5dp"
-                    android:textSize="15dp" />
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="2"
+                        android:textColor="#fff"
+                        android:text="ที่อยู่" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:orientation="horizontal">
+                    <AutoCompleteTextView
+                        android:id="@+id/from_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:hint="ที่อยู่" />
 
-                <TextView
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:text="BT Address"
-                    android:textColor="#fff" />
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
 
-                <EditText
-                    android:id="@+id/BtAddress"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="2"
+                        android:textColor="#fff"
+                        android:text="แขวง/ตำบล" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/from_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:hint="แขวง/ตำบล" />
+
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@layout/rounded_border_edittext"
-                    android:hint="xx:xx:xx:xx:xx:xx"
-                    android:padding="5dp"
-                    android:textSize="15dp" />
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="2"
+                        android:textColor="#fff"
+                        android:text="เขต/อำเภอ" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:layout_margin="5dp"
-                android:orientation="horizontal">
+                    <AutoCompleteTextView
+                        android:id="@+id/from_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:hint="เขต/อำเภอ" />
 
-                <Button
-                    android:id="@+id/BtnTestPrint"
-                    android:layout_width="wrap_content"
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/button_selector"
-                    android:text="ทดสอบพิมพ์"
-                    android:textColor="#fff"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="2"
+                        android:textColor="#fff"
+                        android:text="จังหวัด" />
 
+                    <AutoCompleteTextView
+                        android:id="@+id/from_province"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:hint="จังหวัด" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="4"
+                        android:textColor="#fff"
+                        android:text="รหัสไปรษณี" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/from_postcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="2"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:hint="รหัสไปรษณี" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_weight="2"
+                        android:textColor="#fff"
+                        android:text="เบอร์โทร" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/from_tel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/rounded_border_edittext"
+                        android:layout_weight="1"
+                        android:textSize="15dp"
+                        android:padding="5dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:hint="เบอร์โทร" />
+
+                </LinearLayout>
+
+
+            </LinearLayout-->
 
             <Button
                 android:id="@+id/BtnSave"
@@ -143,9 +360,11 @@
                 android:background="@drawable/button_selector"
                 android:drawableLeft="@drawable/settingsicon"
                 android:padding="10dp"
+                android:layout_margin="20dp"
                 android:text="บันทึกการตั้งค่า"
                 android:textColor="#fff"
                 android:textStyle="bold" />
+
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

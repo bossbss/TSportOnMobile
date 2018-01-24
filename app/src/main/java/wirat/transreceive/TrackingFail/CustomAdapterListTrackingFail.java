@@ -92,6 +92,8 @@ public class CustomAdapterListTrackingFail extends BaseAdapter {
                 holder.Img.setImageResource(R.drawable.emslogo);
             else if(Use.courier_code.equals("TP2"))
                 holder.Img.setImageResource(R.drawable.thailandpostlogo);
+            else if(Use.courier_code.equals("DHL"))
+                holder.Img.setImageResource(R.drawable.dhl);
             else
                 holder.Img.setImageResource(R.drawable.producticon);
 

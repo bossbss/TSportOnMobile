@@ -35,6 +35,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -62,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.BLUETOOTH,
                 Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.INTERNET,
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.READ_PHONE_STATE
@@ -83,12 +84,12 @@ public class MainActivity extends AppCompatActivity {
 
                 SettingDefault();
 
-                if (SettingActivity.BTTYPE.equals("")) {
-                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport Id ที่ การตั้งค่า", true);
+                if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
+                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
                     return;
                 }
 
-                if(SettingActivity.APIKEY.equals(""))
+                if(SettingActivity.APIKEY == null || SettingActivity.APIKEY.equals(""))
                 {
                     FirebaseCheckVersion();
                     return;
@@ -110,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SettingDefault();
 
+                if (SettingActivity.BTTYPE.equals("")) {
+                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
+                    return;
+                }
+
                 Intent Order = new Intent(MainActivity.this, TrakingActivity.class);
                 startActivity(Order);
             }
@@ -120,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SettingDefault();
+
+                if (SettingActivity.BTTYPE.equals("")) {
+                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
+                    return;
+                }
 
                 Intent Order = new Intent(MainActivity.this, TrackingFailActivity.class);
                 startActivity(Order);
@@ -138,8 +149,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void SettingDefault() {
 
-        FirebaseCheckVersion();
-
         DBClass mHelper = new DBClass(MainActivity.this);
         SQLiteDatabase mDb = mHelper.getWritableDatabase();
         Cursor mCursor = mDb.rawQuery("SELECT * FROM " + DBClass.TABLE_SETTING, null);
@@ -147,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
         mCursor.moveToPosition(0);
         SettingActivity.BTADDRESS = mCursor.getString(mCursor.getColumnIndex(DBClass.TABLE_SETTING_BTADDRESS));
         SettingActivity.BTTYPE = mCursor.getString(mCursor.getColumnIndex(DBClass.TABLE_SETTING_BTTYPE));
+
+        FirebaseCheckVersion();
     }
 
     public void hasPermissions(Context context, String... permissionsAll) {
@@ -171,30 +182,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
-                    Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
-                    SettingActivity.APIKEY = value.get("APIKEY");
-                    SettingActivity.SERVER = value.get("SERVER");
-                    SettingActivity.EMAIL = value.get("EMAIL");
-                    SettingActivity.TSPORTENABLE = value.get("TSPORTENABLE");
+                    SettingActivity.APIKEY = dataSnapshot.child("APIKEY").getValue(String.class);
+                    SettingActivity.SERVER = dataSnapshot.child("SERVER").getValue(String.class);
+                    SettingActivity.EMAIL = dataSnapshot.child("EMAIL").getValue(String.class);
+                    SettingActivity.TSPORTENABLE = dataSnapshot.child("TSPORTENABLE").getValue(String.class);
 
-                    if (!value.get("TSPORTVERSIONNAME").equals(BuildConfig.VERSION_NAME)) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setTitle("อัพเดทโปรแกรม")
-                                .setMessage("Version " + value.get("TSPORTVERSIONNAME"))
-                                .setIcon(R.drawable.applyicon)
-                                .setPositiveButton("อัพเดททันที", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        try {
-                                            downloadInLocalFile();
-                                        } catch (Exception ex) {
-                                            Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG);
-                                        }
-                                    }
-                                });
+                    DataSnapshot DHLSnp = dataSnapshot.child("DHL");
 
-                        builder.create().show();
-                    }
-                    Toast.makeText(MainActivity.this, value.get("TSPORTVERSIONNAME"), Toast.LENGTH_LONG).show();
+                    SettingActivity.DHLID = DHLSnp.child("DHLID").getValue().toString();
+                    SettingActivity.URLLABEL = DHLSnp.child("URLLABEL").getValue().toString();
+                    SettingActivity.URLTOKEN = DHLSnp.child("URLTOKEN").getValue().toString();
+                    SettingActivity.URLTRACKING = DHLSnp.child("URLTRACKING").getValue().toString();
+                    SettingActivity.customerAccountId = DHLSnp.child("customerAccountId").getValue().toString();
+                    SettingActivity.handoverMethod = DHLSnp.child("handoverMethod").getValue().toString();
+                    SettingActivity.inlineLabelReturn = DHLSnp.child("inlineLabelReturn").getValue().toString();
+                    SettingActivity.pickupAccountId = DHLSnp.child("pickupAccountId").getValue().toString();
+                    SettingActivity.soldToAccountId = DHLSnp.child("soldToAccountId").getValue().toString();
+
+                    DataSnapshot DHLPkAd = DHLSnp.child("pickupAddress");
+                    Map<String, String> LebelAd = (Map<String, String>) DHLPkAd.getValue();
+                    JSONObject jsonAd = new JSONObject(LebelAd);
+                    SettingActivity.pickupAddress = jsonAd.toString();
+
+                    DataSnapshot DHLLabel = DHLSnp.child("label");
+                    Map<String, String> Lebel = (Map<String, String>) DHLLabel.getValue();                   JSONObject json = new JSONObject(Lebel);
+                    SettingActivity.label = json.toString();
+
+
                     Log.d("TEST Firebase", "onDataChange");
 
                 } catch (Exception ex) {

@@ -30,21 +30,20 @@
             <Button
                 android:id="@+id/BtnOrder"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button_selector"
                 android:drawableLeft="@drawable/addnewicon"
-                android:padding="20dp"
+                android:padding="10dp"
                 android:text="เปิดออเดอร์"
                 android:textColor="#fff"
                 android:textStyle="bold" />
 
-
             <Button
                 android:id="@+id/BtnTracking"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/button_selector"
                 android:drawableLeft="@drawable/yellow_pickup_icon"
                 android:padding="10dp"
@@ -55,8 +54,8 @@
             <Button
                 android:id="@+id/BtnTrackingFail"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/button_selector"
                 android:drawableLeft="@drawable/erroricon"
                 android:padding="10dp"
@@ -67,8 +66,8 @@
             <Button
                 android:id="@+id/BtnSetting"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/button_selector"
                 android:drawableLeft="@drawable/settingsicon"
                 android:padding="10dp"
