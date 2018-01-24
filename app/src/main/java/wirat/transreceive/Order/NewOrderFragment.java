@@ -178,6 +178,9 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
                     PriceListActivity.UseConfirmParamiterValuse.put("data[0][parcel][length]", parcel_length.getText().toString());
                     PriceListActivity.UseConfirmParamiterValuse.put("data[0][parcel][height]", parcel_height.getText().toString());
 
+                    PriceListActivity.UseConfirmParamiterValuse.put("data[0][from][postcode]", from_postcode.getText().toString().trim());
+                    PriceListActivity.UseConfirmParamiterValuse.put("data[0][to][postcode]", to_postcode.getText().toString().trim());
+
                     ArrayList<HashMap<String, String>> ItemArr = new ArrayList<HashMap<String, String>>();
                     if(PriceListActivity.UpDatePriceList("TP2") != 0) {
                         HashMap<String, String> item1 = new HashMap<String, String>();
@@ -193,6 +196,12 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
                         HashMap<String, String> item3 = new HashMap<String, String>();
                         item3.put("courier_code", "DHL");
                         ItemArr.add(item3);
+                    }
+
+                    if(PriceListActivity.UpDatePriceList("SCGEX") != 0) {
+                        HashMap<String, String> item4 = new HashMap<String, String>();
+                        item4.put("courier_code", "SCGEX");
+                        ItemArr.add(item4);
                     }
 
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
@@ -211,7 +220,7 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
 
                 } catch (Exception ex) {
                     Toast.makeText(getActivity(),
-                            ex.getMessage(),
+                            "ระบุข้อมูลไม่ครบ :" +ex.getMessage(),
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -478,6 +487,43 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
         mListener = null;
     }
 
+    HashMap<String, String> UseConfirmParamiterValuse = new HashMap<String, String>();
+
+    public void CkeckPrice() {
+        try {
+            HashMap<String, String> ParamiterValuse = new HashMap<String, String>();
+            ParamiterValuse.put("api_key", SettingActivity.APIKEY);
+            ParamiterValuse.put("data[0][from][name]", from_name.getText().toString().trim());
+            ParamiterValuse.put("data[0][from][address]", from_address.getText().toString().trim());
+            ParamiterValuse.put("data[0][from][district]", from_district.getText().toString().trim());
+            ParamiterValuse.put("data[0][from][state]", from_state.getText().toString().trim());
+            ParamiterValuse.put("data[0][from][province]", from_province.getText().toString().trim());
+            ParamiterValuse.put("data[0][from][postcode]", from_postcode.getText().toString().trim());
+            ParamiterValuse.put("data[0][from][tel]", from_tel.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][name]", to_name.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][address]", to_address.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][district]", to_district.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][state]", to_state.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][province]", to_province.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][postcode]", to_postcode.getText().toString().trim());
+            ParamiterValuse.put("data[0][to][tel]", to_tel.getText().toString().trim());
+            ParamiterValuse.put("data[0][parcel][name]", parcel_name.getText().toString().trim());
+            ParamiterValuse.put("data[0][parcel][weight]", String.valueOf(Float.valueOf(parcel_weight.getText().toString().trim())));
+            ParamiterValuse.put("data[0][parcel][width]", String.valueOf(Float.valueOf(parcel_width.getText().toString().trim())));
+            ParamiterValuse.put("data[0][parcel][length]", String.valueOf(Float.valueOf(parcel_length.getText().toString().trim())));
+            ParamiterValuse.put("data[0][parcel][height]", String.valueOf(Float.valueOf(parcel_height.getText().toString().trim())));
+
+            asyCallServiceAPIRestFulProcess UpVisit = new asyCallServiceAPIRestFulProcess(SettingActivity.SERVER, getActivity(), NewOrderFragment.this, "pricelist", ParamiterValuse);
+            UpVisit.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            UseConfirmParamiterValuse = new HashMap<String, String>();
+            UseConfirmParamiterValuse = ParamiterValuse;
+
+        } catch (Exception ex) {
+            new AlertDialogManager().showAlertDialog(getActivity(), "Error", ex.getMessage(), true);
+        }
+    }
+
     @Override
     public void onTaskComplete(JSONObject result) {
         if (result == null) {
@@ -529,43 +575,6 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
 
     public interface OnFragmentInteractionListener {
         public void onNavFragmentInteraction(String string);
-    }
-
-    HashMap<String, String> UseConfirmParamiterValuse = new HashMap<String, String>();
-
-    public void CkeckPrice() {
-        try {
-            HashMap<String, String> ParamiterValuse = new HashMap<String, String>();
-            ParamiterValuse.put("api_key", SettingActivity.APIKEY);
-            ParamiterValuse.put("data[0][from][name]", from_name.getText().toString().trim());
-            ParamiterValuse.put("data[0][from][address]", from_address.getText().toString().trim());
-            ParamiterValuse.put("data[0][from][district]", from_district.getText().toString().trim());
-            ParamiterValuse.put("data[0][from][state]", from_state.getText().toString().trim());
-            ParamiterValuse.put("data[0][from][province]", from_province.getText().toString().trim());
-            ParamiterValuse.put("data[0][from][postcode]", from_postcode.getText().toString().trim());
-            ParamiterValuse.put("data[0][from][tel]", from_tel.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][name]", to_name.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][address]", to_address.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][district]", to_district.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][state]", to_state.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][province]", to_province.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][postcode]", to_postcode.getText().toString().trim());
-            ParamiterValuse.put("data[0][to][tel]", to_tel.getText().toString().trim());
-            ParamiterValuse.put("data[0][parcel][name]", parcel_name.getText().toString().trim());
-            ParamiterValuse.put("data[0][parcel][weight]", parcel_weight.getText().toString().trim());
-            ParamiterValuse.put("data[0][parcel][width]", parcel_width.getText().toString().trim());
-            ParamiterValuse.put("data[0][parcel][length]", parcel_length.getText().toString().trim());
-            ParamiterValuse.put("data[0][parcel][height]", parcel_height.getText().toString().trim());
-
-            asyCallServiceAPIRestFulProcess UpVisit = new asyCallServiceAPIRestFulProcess(SettingActivity.SERVER, getActivity(), NewOrderFragment.this, "pricelist", ParamiterValuse);
-            UpVisit.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-            UseConfirmParamiterValuse = new HashMap<String, String>();
-            UseConfirmParamiterValuse = ParamiterValuse;
-
-        } catch (Exception ex) {
-            new AlertDialogManager().showAlertDialog(getActivity(), "Error", ex.getMessage(), true);
-        }
     }
 
     @Override

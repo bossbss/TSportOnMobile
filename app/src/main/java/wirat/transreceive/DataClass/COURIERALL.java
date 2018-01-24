@@ -110,6 +110,14 @@ public class COURIERALL{
                 THP.courier_condition = "-ไม่มี";
                 THP.courier_Enable = true;
                 break;
+            case "SCGEX":
+                THP.courier_code = "SCGEX";
+                THP.courier_Name = "SCG Yamato Express Frozen";
+                THP.courier_condition =
+                        "-ระยะเวลาจัดส่ง 1-2 วัน\n" +
+                        "-ขนาดกล่อง (กว้าง+ยาว+สูง) ไม่เกิน 160 เซนติเมตร\n" ;
+                THP.courier_Enable = true;
+                break;
             default:
                 THP.courier_code = "";
                 THP.courier_Name = "ไม่ตรงกับบริการใด";

@@ -11,9 +11,11 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -69,6 +71,17 @@ public class PriceListActivity extends AppCompatActivity {
                 DHLitem.put("minimum", 1);
 
                 ArryPrice.put(DHLitem);
+
+                JSONObject SCGEXitem = new JSONObject();
+                SCGEXitem.put("courier_code", "SCGEX");
+                SCGEXitem.put("price", 0);
+                SCGEXitem.put("estimate_time", "");
+                SCGEXitem.put("available", true);
+                SCGEXitem.put("remark", "");
+                SCGEXitem.put("err_code", "");
+                SCGEXitem.put("minimum", 1);
+
+                ArryPrice.put(SCGEXitem);
             } catch (Exception ex) {
                 new AlertDialogManager().showAlertDialog(PriceListActivity.this, "Error", ex.getMessage(), true);
             }
@@ -212,7 +225,7 @@ public class PriceListActivity extends AppCompatActivity {
                     asyCallServiceAPIRestFulProcessDHL UpVisit = new asyCallServiceAPIRestFulProcessDHL(PriceListActivity.this, new AsyncTaskCompleteListener<JSONObject>() {
                         @Override
                         public void onTaskComplete(JSONObject result) {
-                            if (result == null) {
+                            if (result == null || result.toString().equals("{}")) {
                                 new AlertDialogManager().showAlertDialog(PriceListActivity.this, "ผิดพลาด ", "ไม่พบการส่งคืนค่ากลับ", true);
                                 return;
                             }
@@ -234,8 +247,8 @@ public class PriceListActivity extends AppCompatActivity {
                                 byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
                                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-                                String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/"+ labels.getString("shipmentID") + ".jpg";
-                                File file = SendItemFragment.saveBitMap(PriceListActivity.this, decodedByte,filename);
+                                String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + labels.getString("shipmentID") + ".jpg";
+                                File file = SendItemFragment.saveBitMap(PriceListActivity.this, decodedByte, filename);
                                 if (file != null) {
                                     Toast.makeText(PriceListActivity.this, "Drawing saved to the gallery!", Toast.LENGTH_LONG);
                                 } else {
@@ -246,14 +259,14 @@ public class PriceListActivity extends AppCompatActivity {
                                 COURIER Use = Cour.Courier_Retrun("DHL");
 
                                 JSONObject ItemAll = new JSONObject();
-                                ItemAll.put("purchase_id",labels.getString("shipmentID"));
+                                ItemAll.put("purchase_id", labels.getString("shipmentID"));
 
                                 JSONObject ItemOne = new JSONObject();
-                                ItemOne.put("status","true");
-                                ItemOne.put("tracking_code",labels.getString("deliveryConfirmationNo"));
-                                ItemOne.put("courier_code","DHL");
-                                ItemOne.put("price","0") ;
-                                ItemOne.put("courier_tracking_code",labels.getString("shipmentID"));
+                                ItemOne.put("status", "true");
+                                ItemOne.put("tracking_code", labels.getString("deliveryConfirmationNo"));
+                                ItemOne.put("courier_code", "DHL");
+                                ItemOne.put("price", "0");
+                                ItemOne.put("courier_tracking_code", labels.getString("shipmentID"));
 
                                 InsertBookingLine(UseConfirmParamiterValuse, ItemAll, ItemOne);
                                 Intent returnIntent = new Intent();
@@ -272,6 +285,57 @@ public class PriceListActivity extends AppCompatActivity {
                         }
                     }, ParamiterValuse);
                     UpVisit.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                } else if (data.getStringExtra("courier_code").equals("SCGEX")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("ระบุเลขที่ติดตามพัสดุ");
+                    final EditText input = new EditText(this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(input);
+
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String m_Text = input.getText().toString();
+                            try {
+                                if(m_Text.length() > 0) {
+                                    COURIERALL Cour = new COURIERALL();
+                                    COURIER Use = Cour.Courier_Retrun("SCGEX");
+
+                                    JSONObject ItemAll = new JSONObject();
+                                    ItemAll.put("purchase_id", m_Text);
+
+                                    JSONObject ItemOne = new JSONObject();
+                                    ItemOne.put("status", "true");
+                                    ItemOne.put("tracking_code", m_Text);
+                                    ItemOne.put("courier_code", "SCGEX");
+                                    ItemOne.put("price", "0");
+                                    ItemOne.put("courier_tracking_code", m_Text);
+
+                                    InsertBookingLine(UseConfirmParamiterValuse, ItemAll, ItemOne);
+                                    Intent returnIntent = new Intent();
+                                    returnIntent.putExtra("purchase_id", ItemAll.getString("purchase_id"));
+                                    returnIntent.putExtra("courier_code", Use.courier_code);
+                                    returnIntent.putExtra("courier_code_name", Use.courier_Name);
+                                    returnIntent.putExtra("price", String.valueOf(PriceListActivity.UpDatePriceList(ItemOne.getString("courier_code"))));
+                                    returnIntent.putExtra("tracking_code", ItemOne.getString("tracking_code"));
+                                    returnIntent.putExtra("courier_tracking_code", ItemOne.getString("courier_tracking_code"));
+                                    setResult(100, returnIntent);
+                                    finish();
+                                }
+                            } catch (JSONException e) {
+                                new AlertDialogManager().showAlertDialog(PriceListActivity.this, "ผิดพลาด ", e.getMessage(), true);
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+
                 } else {
                     new AlertDialogManager().showAlertDialog(PriceListActivity.this, "ผิดพลาด", "บริการที่เลือกไม่อยู่ภายใต้ บริการที่กำหนด", true);
                 }
@@ -430,14 +494,19 @@ public class PriceListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    static public int UpDatePriceList(String courier_code) {
-        float weight = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][weight]"));
-        float width = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][width]"));
-        float length = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][length]"));
-        float height = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][height]"));
+    static public String scgDetail = "";
 
-        float WLH = width+length+height;
-        float xWLH = width*length*height/5;
+    static public int UpDatePriceList(String courier_code) {
+        float weight = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][weight]") == "" ? "0" : PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][weight]"));
+        float width = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][width]") == "" ? "0" : PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][width]"));
+        float length = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][length]") == "" ? "0" : PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][length]"));
+        float height = Float.valueOf(PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][height]") == "" ? "0" : PriceListActivity.UseConfirmParamiterValuse.get("data[0][parcel][height]"));
+
+        String poscodefrom = PriceListActivity.UseConfirmParamiterValuse.get("data[0][from][postcode]");
+        String poscodeto = PriceListActivity.UseConfirmParamiterValuse.get("data[0][to][postcode]");
+
+        float WLH = width + length + height;
+        float xWLH = width * length * height / 5;
 
         if (courier_code.equals("TP2")) {
             if (weight <= 20.0)
@@ -524,7 +593,6 @@ public class PriceListActivity extends AppCompatActivity {
             else
                 return 0;
         } else if (courier_code.equals("DHL")) {
-
             int fhl1 = 0;
             if (WLH <= 0) fhl1 = 0;
             else if (WLH <= 40.0) fhl1 = 45;
@@ -538,66 +606,123 @@ public class PriceListActivity extends AppCompatActivity {
             else fhl1 = 0;
 
             int fhl12 = 0;
-            if(weight<=0) fhl12 =0;
-            else if(weight<=250) fhl12 =64;
-            else if(weight<=500) fhl12 =80;
-            else if(weight<=1000) fhl12 =95;
-            else if(weight<=2000) fhl12 =105;
-            else if(weight<=3000) fhl12 =115;
-            else if(weight<=4000) fhl12 =120;
-            else if(weight<=5000) fhl12 =125;
-            else if(weight<=6000) fhl12 =135;
-            else if(weight<=7000) fhl12 =140;
-            else if(weight<=8000) fhl12 =145;
-            else if(weight<=9000) fhl12 =150;
-            else if(weight<=10000) fhl12 =165;
-            else if(weight<=11000) fhl12 =170;
-            else if(weight<=12000) fhl12 =180;
-            else if(weight<=13000) fhl12 =190;
-            else if(weight<=14000) fhl12 =200;
-            else if(weight<=15000) fhl12 =210;
-            else if(weight<=20000) fhl12 =340;
-            else if(weight<=25000) fhl12 =430;
-            else if(weight<=30000) fhl12 =690;
-            else fhl12 =0;
+            if (weight <= 0) fhl12 = 0;
+            else if (weight <= 250) fhl12 = 64;
+            else if (weight <= 500) fhl12 = 80;
+            else if (weight <= 1000) fhl12 = 95;
+            else if (weight <= 2000) fhl12 = 105;
+            else if (weight <= 3000) fhl12 = 115;
+            else if (weight <= 4000) fhl12 = 120;
+            else if (weight <= 5000) fhl12 = 125;
+            else if (weight <= 6000) fhl12 = 135;
+            else if (weight <= 7000) fhl12 = 140;
+            else if (weight <= 8000) fhl12 = 145;
+            else if (weight <= 9000) fhl12 = 150;
+            else if (weight <= 10000) fhl12 = 165;
+            else if (weight <= 11000) fhl12 = 170;
+            else if (weight <= 12000) fhl12 = 180;
+            else if (weight <= 13000) fhl12 = 190;
+            else if (weight <= 14000) fhl12 = 200;
+            else if (weight <= 15000) fhl12 = 210;
+            else if (weight <= 20000) fhl12 = 340;
+            else if (weight <= 25000) fhl12 = 430;
+            else if (weight <= 30000) fhl12 = 690;
+            else fhl12 = 0;
 
             int fhl11 = 0;
-            if(xWLH<=0) fhl11 = 0;
-            else if(xWLH<=250) fhl11 = 64;
-            else if(xWLH<=500) fhl11 = 80;
-            else if(xWLH<=1000) fhl11 = 95;
-            else if(xWLH<=2000) fhl11 = 105;
-            else if(xWLH<=3000) fhl11 = 115;
-            else if(xWLH<=4000) fhl11 = 120;
-            else if(xWLH<=5000) fhl11 = 125;
-            else if(xWLH<=6000) fhl11 = 135;
-            else if(xWLH<=7000) fhl11 = 140;
-            else if(xWLH<=8000) fhl11 = 145;
-            else if(xWLH<=9000) fhl11 = 150;
-            else if(xWLH<=10000) fhl11 = 165;
-            else if(xWLH<=11000) fhl11 = 170;
-            else if(xWLH<=12000) fhl11 = 180;
-            else if(xWLH<=13000) fhl11 = 190;
-            else if(xWLH<=14000) fhl11 = 200;
-            else if(xWLH<=15000) fhl11 = 210;
-            else if(xWLH<=20000) fhl11 = 340;
-            else if(xWLH<=25000) fhl11 = 430;
-            else if(xWLH<=30000) fhl11 = 690;
+            if (xWLH <= 0) fhl11 = 0;
+            else if (xWLH <= 250) fhl11 = 64;
+            else if (xWLH <= 500) fhl11 = 80;
+            else if (xWLH <= 1000) fhl11 = 95;
+            else if (xWLH <= 2000) fhl11 = 105;
+            else if (xWLH <= 3000) fhl11 = 115;
+            else if (xWLH <= 4000) fhl11 = 120;
+            else if (xWLH <= 5000) fhl11 = 125;
+            else if (xWLH <= 6000) fhl11 = 135;
+            else if (xWLH <= 7000) fhl11 = 140;
+            else if (xWLH <= 8000) fhl11 = 145;
+            else if (xWLH <= 9000) fhl11 = 150;
+            else if (xWLH <= 10000) fhl11 = 165;
+            else if (xWLH <= 11000) fhl11 = 170;
+            else if (xWLH <= 12000) fhl11 = 180;
+            else if (xWLH <= 13000) fhl11 = 190;
+            else if (xWLH <= 14000) fhl11 = 200;
+            else if (xWLH <= 15000) fhl11 = 210;
+            else if (xWLH <= 20000) fhl11 = 340;
+            else if (xWLH <= 25000) fhl11 = 430;
+            else if (xWLH <= 30000) fhl11 = 690;
             else fhl11 = 0;
 
-            if(xWLH > 30000 || weight > 30000 || WLH > 200)
+            if (xWLH > 30000 || weight > 30000 || WLH > 200)
                 return 0;
 
             int tmp = 0;
-            if(fhl12 > fhl11)
+            if (fhl12 > fhl11)
                 tmp = fhl12;
             else
                 tmp = fhl11;
 
-            if(fhl1 > tmp)
-                return fhl1 ;
+            if (fhl1 > tmp)
+                return fhl1;
             else
                 return tmp;
+        } else if (courier_code.equals("SCGEX")) {
+            float Siz = 0;
+            if (WLH > 0 && WLH <= 40.0)
+                Siz = 40;
+            else if (WLH > 40.0 && WLH <= 60.0)
+                Siz = 60;
+            else if (WLH > 60.0 && WLH <= 80.0)
+                Siz = 80;
+            else if (WLH > 80.0 && WLH <= 100.0)
+                Siz = 100;
+            else if (WLH > 100.0 && WLH <= 120.0)
+                Siz = 120;
+            else if (WLH > 120.0 && WLH <= 140.0)
+                Siz = 140;
+            else if (WLH > 140.0 && WLH <= 160.0)
+                Siz = 160;
+            else
+                Siz = 0;
+
+            if (poscodefrom.equals("") || poscodeto.equals("") || !poscodefrom.substring(0, 1).equals(poscodeto.substring(0, 1))) { //ต่าภาคหรือไม่ระบุ ปณ
+                scgDetail = "(ราคาต่างภาค)";
+                if (Siz == 40)
+                    return 50;
+                else if (Siz == 60)
+                    return 85;
+                else if (Siz == 80)
+                    return 105;
+                else if (Siz == 100)
+                    return 145;
+                else if (Siz == 120)
+                    return 210;
+                else if (Siz == 140)
+                    return 270;
+                else if (Siz == 160)
+                    return 300;
+                else
+                    return 0;
+            } else  //ภายในภาค
+            {
+                scgDetail = "(ราคาในภาค)";
+                if (Siz == 40)
+                    return 40;
+                else if (Siz == 60)
+                    return 70;
+                else if (Siz == 80)
+                    return 90;
+                else if (Siz == 100)
+                    return 130;
+                else if (Siz == 120)
+                    return 180;
+                else if (Siz == 140)
+                    return 240;
+                else if (Siz == 160)
+                    return 270;
+                else
+                    return 0;
+            }
         } else
             return 0;
     }

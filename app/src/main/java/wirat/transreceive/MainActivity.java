@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SettingDefault();
 
-                if (SettingActivity.BTTYPE.equals("")) {
+                if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
                     new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
                     return;
                 }
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SettingDefault();
 
-                if (SettingActivity.BTTYPE.equals("")) {
+                if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
                     new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
                     return;
                 }

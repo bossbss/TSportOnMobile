@@ -258,11 +258,20 @@ public class SendItemFragment extends Fragment {
 
                     Bitmap bitmap = null;
                     /***Create Image***/
+                    final String Courier_codeF = Courier_code;
                     if(Courier_code.equals("DHL")) {
                         String photoPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/"+ Courier_tracking_code + ".jpg";
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                         bitmap = BitmapFactory.decodeFile(photoPath, options);
+
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 450, 800, false);
+
+                    }else if(Courier_code.equals("SCGEX")) {
+                        View v = new CanvasStickerSCGEx(getActivity(), textImg, Courier_tracking_code, tracking_code);
+                        bitmap = Bitmap.createBitmap(800/*width*/, 450 /*height*/, Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        v.draw(canvas);
                     }
                     else {
                         View v = new CanvasSticker(getActivity(), textImg, Courier_tracking_code, tracking_code);
@@ -297,11 +306,15 @@ public class SendItemFragment extends Fragment {
 
                     dialogBuilder.setNeutralButton("พิมพ์", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-
-                            //SettingActivity.pairPrinter(textprintf, getActivity());
-                            Matrix matrix = new Matrix();
-                            matrix.postRotate(90);
-                            SettingActivity.pairPrinterImage(Bitmap.createBitmap(bitmapf, 0, 0, bitmapf.getWidth(), bitmapf.getHeight(), matrix, true), getActivity());
+                            Bitmap ImgPrint = null;
+                            if(Courier_codeF.equals("DHL")) {
+                                ImgPrint = bitmapf;
+                            }else {
+                                Matrix matrix = new Matrix();
+                                matrix.postRotate(90);
+                                ImgPrint = Bitmap.createBitmap(bitmapf, 0, 0, bitmapf.getWidth(), bitmapf.getHeight(), matrix, true);
+                            }
+                            SettingActivity.pairPrinterImage(ImgPrint, getActivity());
                             dialog.cancel();
                         }
                     });
@@ -457,6 +470,53 @@ public class SendItemFragment extends Fragment {
             canvas.drawText("SHIPPOP", VWidth+280, Vheight+110, paint);
 
             paint.setTextSize(25);
+            for (int i = 0; i < text.size(); i++) {
+                canvas.drawText(text.get(i), VWidth+40, (40 * (1 + i)) + Vheight + 100, paint);
+            }
+
+        }
+    }
+
+    public class CanvasStickerSCGEx extends View {
+        ArrayList<String> text = new ArrayList<String>();
+        String Courier_tracking_code = "";
+        String tracking_code = "";
+        public CanvasStickerSCGEx(Context context, ArrayList<String> Text,String Courier_tracking_code,String tracking_code) {
+            super(context);
+            this.text = Text;
+            this.Courier_tracking_code = Courier_tracking_code;
+            this.tracking_code = tracking_code;
+            // TODO Auto-generated constructor stub
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            // TODO Auto-generated method stub
+            super.onDraw(canvas);
+            canvas.drawColor(Color.WHITE);
+
+            int Xwidth = 0;
+            int Yheight = 10;
+
+            Paint paint = new Paint();
+            Bitmap bitmapEms = BitmapFactory.decodeResource(getResources(), R.drawable.scgex);
+            paint.setColor(Color.WHITE);
+            canvas.drawBitmap(bitmapEms, null, new RectF(Xwidth+10, 70, Xwidth+370, 380), paint);
+
+            int Vheight = 30;
+            int VWidth = 370;
+
+            try {
+                Code128 barcode = new Code128();
+                barcode = CreatrBarcode128(this.Courier_tracking_code);
+                RectF bounds = new RectF(VWidth+20, Vheight, 0, 0);
+                barcode.drawBarcode(canvas, bounds);
+            } catch (Exception ex) {
+                Toast.makeText(getActivity(),ex.getMessage(),Toast.LENGTH_LONG);
+            }
+
+            paint.setTextSize(25);
+            paint.setColor(Color.BLACK);
             for (int i = 0; i < text.size(); i++) {
                 canvas.drawText(text.get(i), VWidth+40, (40 * (1 + i)) + Vheight + 100, paint);
             }

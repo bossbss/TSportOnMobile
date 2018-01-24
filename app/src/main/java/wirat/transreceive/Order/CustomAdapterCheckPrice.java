@@ -70,10 +70,16 @@ public class CustomAdapterCheckPrice extends BaseAdapter {
 
             HashMap<String, String> json_data = getItem(position);
             COURIERALL Cour = new COURIERALL();
-            COURIER Use = Cour.Courier_Retrun(json_data.get("courier_code"));
-            holder.price.setText(String.valueOf(PriceListActivity.UpDatePriceList(json_data.get("courier_code"))));
-            holder.courier_code_name.setText(Use.courier_Name);
-
+            if(json_data.get("courier_code").equals("SCGEX")) {
+                COURIER Use = Cour.Courier_Retrun(json_data.get("courier_code"));
+                holder.price.setText(String.valueOf(PriceListActivity.UpDatePriceList(json_data.get("courier_code"))));
+                holder.courier_code_name.setText(PriceListActivity.scgDetail+Use.courier_Name);
+            }else
+            {
+                COURIER Use = Cour.Courier_Retrun(json_data.get("courier_code"));
+                holder.price.setText(String.valueOf(PriceListActivity.UpDatePriceList(json_data.get("courier_code"))));
+                holder.courier_code_name.setText(Use.courier_Name);
+            }
 
             if (json_data.get("courier_code").equals("THP"))
                 holder.Img.setImageResource(R.drawable.emslogo);
@@ -81,6 +87,8 @@ public class CustomAdapterCheckPrice extends BaseAdapter {
                 holder.Img.setImageResource(R.drawable.thailandpostlogo);
             else if (json_data.get("courier_code").equals("DHL"))
                 holder.Img.setImageResource(R.drawable.dhl);
+            else if (json_data.get("courier_code").equals("SCGEX"))
+                holder.Img.setImageResource(R.drawable.scgex);
             else
                 holder.Img.setImageResource(R.drawable.producticon);
 

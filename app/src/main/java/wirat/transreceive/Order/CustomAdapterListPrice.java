@@ -86,6 +86,8 @@ public class CustomAdapterListPrice extends BaseAdapter {
                     holder.Img.setImageResource(R.drawable.thailandpostlogo);
                 else if(json_data.getString("courier_code").equals("DHL"))
                     holder.Img.setImageResource(R.drawable.dhl);
+                else if(json_data.getString("courier_code").equals("SCGEX"))
+                    holder.Img.setImageResource(R.drawable.scgex);
                 else
                     holder.Img.setImageResource(R.drawable.producticon);
             }

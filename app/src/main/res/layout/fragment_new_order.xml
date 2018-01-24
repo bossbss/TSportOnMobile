@@ -84,7 +84,7 @@
                     android:textSize="15dp"
                     android:padding="5dp"
                     android:inputType="number"
-                    android:hint="0" />
+                    android:text="0" />
 
             </LinearLayout>
 
