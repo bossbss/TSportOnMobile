@@ -61,27 +61,31 @@ public class PriceListActivity extends AppCompatActivity {
         if (ArryPrice != null) {
             /**DHL***/
             try {
-                JSONObject DHLitem = new JSONObject();
-                DHLitem.put("courier_code", "DHL");
-                DHLitem.put("price", 0);
-                DHLitem.put("estimate_time", "");
-                DHLitem.put("available", true);
-                DHLitem.put("remark", "");
-                DHLitem.put("err_code", "");
-                DHLitem.put("minimum", 1);
+                if(SettingActivity.DHLENABLE.equals("1")) {
+                    JSONObject DHLitem = new JSONObject();
+                    DHLitem.put("courier_code", "DHL");
+                    DHLitem.put("price", 0);
+                    DHLitem.put("estimate_time", "");
+                    DHLitem.put("available", true);
+                    DHLitem.put("remark", "");
+                    DHLitem.put("err_code", "");
+                    DHLitem.put("minimum", 1);
 
-                ArryPrice.put(DHLitem);
+                    ArryPrice.put(DHLitem);
+                }
 
-                JSONObject SCGEXitem = new JSONObject();
-                SCGEXitem.put("courier_code", "SCGEX");
-                SCGEXitem.put("price", 0);
-                SCGEXitem.put("estimate_time", "");
-                SCGEXitem.put("available", true);
-                SCGEXitem.put("remark", "");
-                SCGEXitem.put("err_code", "");
-                SCGEXitem.put("minimum", 1);
+                if(SettingActivity.SCGEXENABLE.equals("1")) {
+                    JSONObject SCGEXitem = new JSONObject();
+                    SCGEXitem.put("courier_code", "SCGEX");
+                    SCGEXitem.put("price", 0);
+                    SCGEXitem.put("estimate_time", "");
+                    SCGEXitem.put("available", true);
+                    SCGEXitem.put("remark", "");
+                    SCGEXitem.put("err_code", "");
+                    SCGEXitem.put("minimum", 1);
 
-                ArryPrice.put(SCGEXitem);
+                    ArryPrice.put(SCGEXitem);
+                }
             } catch (Exception ex) {
                 new AlertDialogManager().showAlertDialog(PriceListActivity.this, "Error", ex.getMessage(), true);
             }
@@ -242,17 +246,6 @@ public class PriceListActivity extends AppCompatActivity {
                                 if (!responseStatus.getString("code").equals("200")) {
                                     new AlertDialogManager().showAlertDialog(PriceListActivity.this, "ผิดพลาด ", ((JSONObject) responseStatus.getJSONArray("messageDetails").get(0)).getString("messageDetail"), true);
                                     return;
-                                }
-                                String encodedImage = labels.getString("content");
-                                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-                                String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + labels.getString("shipmentID") + ".jpg";
-                                File file = SendItemFragment.saveBitMap(PriceListActivity.this, decodedByte, filename);
-                                if (file != null) {
-                                    Toast.makeText(PriceListActivity.this, "Drawing saved to the gallery!", Toast.LENGTH_LONG);
-                                } else {
-                                    Toast.makeText(PriceListActivity.this, "Oops! Image could not be saved.", Toast.LENGTH_LONG);
                                 }
 
                                 COURIERALL Cour = new COURIERALL();

@@ -141,7 +141,7 @@ public class TrakingActivity extends AppCompatActivity {
                                             ListTrack.setAdapter(itemsAdapter);
                                         }
 
-                                    } catch (JSONException e) {
+                                    } catch (Exception e) {
                                         new AlertDialogManager().showAlertDialog(TrakingActivity.this, "ผิดพลาด ", e.getMessage(), true);
                                     }
                                 }

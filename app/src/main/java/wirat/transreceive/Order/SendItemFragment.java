@@ -17,12 +17,14 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,15 +46,20 @@ import com.zebra.sdk.graphics.internal.DitheredImageProvider;
 import com.zebra.sdk.printer.ZebraPrinter;
 import com.zebra.sdk.printer.ZebraPrinterFactory;
 
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import wirat.transreceive.AlertDialogManager;
+import wirat.transreceive.CallService.AsyncTaskCompleteListener;
+import wirat.transreceive.CallService.asyCallServiceAPIRestFulProcessDHLReprint;
 import wirat.transreceive.DataBaseHelper.DBClass;
 import wirat.transreceive.DataClass.bookingResponseObject;
 import wirat.transreceive.R;
@@ -260,79 +267,56 @@ public class SendItemFragment extends Fragment {
                     /***Create Image***/
                     final String Courier_codeF = Courier_code;
                     if(Courier_code.equals("DHL")) {
-                        String photoPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) +"/"+ Courier_tracking_code + ".jpg";
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                        bitmap = BitmapFactory.decodeFile(photoPath, options);
+                        HashMap<String, String> ParamiterValuse = new HashMap<String, String>();
+                        ParamiterValuse.put("tracking_code", Courier_tracking_code);
+                        asyCallServiceAPIRestFulProcessDHLReprint UpVisit = new asyCallServiceAPIRestFulProcessDHLReprint(getActivity(), new AsyncTaskCompleteListener<JSONObject>() {
+                            @Override
+                            public void onTaskComplete(JSONObject result) {
+                                if (result == null) {
+                                    new AlertDialogManager().showAlertDialog(getActivity(), "ผิดพลาด ", "ไม่พบการส่งคืนค่ากลับ", true);
+                                    return;
+                                }
+                                try {
+                                    JSONObject labelResponse = result.getJSONObject("labelReprintResponse");
+                                    JSONObject bd = labelResponse.getJSONObject("bd");
+                                    JSONObject responseStatus = bd.getJSONObject("responseStatus");
 
-                        bitmap = Bitmap.createScaledBitmap(bitmap, 450, 800, false);
+                                    if (!responseStatus.getString("code").equals("200")) {
+                                        new AlertDialogManager().showAlertDialog(getActivity(), "ผิดพลาด ", ((JSONObject) responseStatus.getJSONArray("messageDetails").get(0)).getString("messageDetail"), true);
+                                        return;
+                                    }
+                                    JSONObject shipmentItems = bd.getJSONArray("shipmentItems").getJSONObject(0);
+                                    String encodedImage = shipmentItems.getString("content");
+                                    byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                                    Bitmap bitmapN = Bitmap.createScaledBitmap(decodedByte, 450, 800, false);
+
+                                    ShowAlert(bitmapN,Courier_codeF);
+
+                                } catch (Exception e) {
+                                    new AlertDialogManager().showAlertDialog(getActivity(), "ผิดพลาด ", e.getMessage(), true);
+                                }
+                            }
+                        }, ParamiterValuse);
+                        UpVisit.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     }else if(Courier_code.equals("SCGEX")) {
                         View v = new CanvasStickerSCGEx(getActivity(), textImg, Courier_tracking_code, tracking_code);
                         bitmap = Bitmap.createBitmap(800/*width*/, 450 /*height*/, Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
                         v.draw(canvas);
+
+                        ShowAlert(bitmap,Courier_codeF);
                     }
                     else {
                         View v = new CanvasSticker(getActivity(), textImg, Courier_tracking_code, tracking_code);
                         bitmap = Bitmap.createBitmap(800/*width*/, 450 /*height*/, Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
                         v.draw(canvas);
+
+                        ShowAlert(bitmap,Courier_codeF);
                     }
-                    /***Show Image***/
-                    final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-                    dialogBuilder.setIcon(R.drawable.applyicon);
-                    dialogBuilder.setTitle("ใบปะหน้าพัสดุ");
-                    LayoutInflater inflater = getActivity().getLayoutInflater();
-                    View dialogView = inflater.inflate(R.layout.alertimage, null);
-                    dialogBuilder.setView(dialogView);
-
-                    ImageView ImageV = (ImageView) dialogView.findViewById(R.id.dialog_imageview);
-                    ImageV.setImageBitmap(bitmap);
-                    final Bitmap bitmapf = bitmap;
-
-                    dialogBuilder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + System.currentTimeMillis() + ".jpg";
-                            File file = saveBitMap(getActivity(), bitmapf,filename);
-                            if (file != null) {
-                                Toast.makeText(getActivity(), "Drawing saved to the gallery!", Toast.LENGTH_LONG);
-                            } else {
-                                Toast.makeText(getActivity(), "Oops! Image could not be saved.", Toast.LENGTH_LONG);
-                            }
-                            dialog.cancel();
-                        }
-                    });
-
-                    dialogBuilder.setNeutralButton("พิมพ์", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Bitmap ImgPrint = null;
-                            if(Courier_codeF.equals("DHL")) {
-                                ImgPrint = bitmapf;
-                            }else {
-                                Matrix matrix = new Matrix();
-                                matrix.postRotate(90);
-                                ImgPrint = Bitmap.createBitmap(bitmapf, 0, 0, bitmapf.getWidth(), bitmapf.getHeight(), matrix, true);
-                            }
-                            SettingActivity.pairPrinterImage(ImgPrint, getActivity());
-                            dialog.cancel();
-                        }
-                    });
-
-                    dialogBuilder.setNegativeButton("ส่งต่อ", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setType("image/*");
-                            String bitmapPath = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), bitmapf, "title", null);
-                            Uri bitmapUri = Uri.parse(bitmapPath);
-                            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
-                            startActivity(Intent.createChooser(intent, "Shared App"));
-                            dialog.cancel();
-                        }
-                    });
-
-                    AlertDialog alertDialog = dialogBuilder.create();
-                    alertDialog.show();
 
                     /***Clear List***/
                     Adf = new CustomAdapterListBooking(getActivity(), objectList);
@@ -345,6 +329,63 @@ public class SendItemFragment extends Fragment {
         });
 
         return V;
+    }
+
+    private void ShowAlert(Bitmap bitmap,final String Courier_codeF){
+        /***Show Image***/
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setIcon(R.drawable.applyicon);
+        dialogBuilder.setTitle("ใบปะหน้าพัสดุ");
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alertimage, null);
+        dialogBuilder.setView(dialogView);
+
+        ImageView ImageV = (ImageView) dialogView.findViewById(R.id.dialog_imageview);
+        ImageV.setImageBitmap(bitmap);
+        final Bitmap bitmapf = bitmap;
+
+        dialogBuilder.setPositiveButton("บันทึก", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + System.currentTimeMillis() + ".jpg";
+                File file = saveBitMap(getActivity(), bitmapf,filename);
+                if (file != null) {
+                    Toast.makeText(getActivity(), "Drawing saved to the gallery!", Toast.LENGTH_LONG);
+                } else {
+                    Toast.makeText(getActivity(), "Oops! Image could not be saved.", Toast.LENGTH_LONG);
+                }
+                dialog.cancel();
+            }
+        });
+
+        dialogBuilder.setNeutralButton("พิมพ์", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Bitmap ImgPrint = null;
+                if(Courier_codeF.equals("DHL")) {
+                    ImgPrint = bitmapf;
+                }else {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    ImgPrint = Bitmap.createBitmap(bitmapf, 0, 0, bitmapf.getWidth(), bitmapf.getHeight(), matrix, true);
+                }
+                SettingActivity.pairPrinterImage(ImgPrint, getActivity());
+                dialog.cancel();
+            }
+        });
+
+        dialogBuilder.setNegativeButton("ส่งต่อ", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/*");
+                String bitmapPath = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), bitmapf, "title", null);
+                Uri bitmapUri = Uri.parse(bitmapPath);
+                intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+                startActivity(Intent.createChooser(intent, "Shared App"));
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
     @Override

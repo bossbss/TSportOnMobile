@@ -43,10 +43,14 @@ public class SettingActivity extends AppCompatActivity {
     public static String BTTYPE = "";
     public static String TSPORTENABLE = "";
 
+    public static String SCGEXENABLE = "";
+    public static String DHLENABLE = "";
+
     public static String DHLID = "";
     public static String URLLABEL = "";
     public static String URLTOKEN = "";
     public static String URLTRACKING = "";
+    public static String URLREPRINT = "";
     public static String customerAccountId = "";
     public static String handoverMethod = "";
     public static String inlineLabelReturn = "";

@@ -192,13 +192,13 @@ public class NewOrderFragment extends Fragment implements AsyncTaskCompleteListe
                         item2.put("courier_code", "THP");
                         ItemArr.add(item2);
                     }
-                    if(PriceListActivity.UpDatePriceList("DHL") != 0) {
+                    if(SettingActivity.DHLENABLE.equals("1") && (PriceListActivity.UpDatePriceList("DHL") != 0)) {
                         HashMap<String, String> item3 = new HashMap<String, String>();
                         item3.put("courier_code", "DHL");
                         ItemArr.add(item3);
                     }
 
-                    if(PriceListActivity.UpDatePriceList("SCGEX") != 0) {
+                    if(SettingActivity.SCGEXENABLE.equals("1") && (PriceListActivity.UpDatePriceList("SCGEX") != 0)) {
                         HashMap<String, String> item4 = new HashMap<String, String>();
                         item4.put("courier_code", "SCGEX");
                         ItemArr.add(item4);

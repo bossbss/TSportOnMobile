@@ -82,23 +82,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                SettingDefault();
-
-                if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
-                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
-                    return;
-                }
-
-                if(SettingActivity.APIKEY == null || SettingActivity.APIKEY.equals(""))
-                {
-                    FirebaseCheckVersion();
-                    return;
-                }
-
-                if (!SettingActivity.TSPORTENABLE.equals("1")) {
-                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระงับการใช้งาน ติดต่อผู้พัฒนา", true);
-                    return;
-                } else {
+                if(CheckConnecttion()) {
                     Intent Order = new Intent(MainActivity.this, OrderActivity.class);
                     startActivity(Order);
                 }
@@ -109,15 +93,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                SettingDefault();
 
-                if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
-                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
-                    return;
+                if(CheckConnecttion()) {
+                    Intent Order = new Intent(MainActivity.this, TrakingActivity.class);
+                    startActivity(Order);
                 }
-
-                Intent Order = new Intent(MainActivity.this, TrakingActivity.class);
-                startActivity(Order);
             }
         });
 
@@ -125,15 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                SettingDefault();
 
-                if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
-                    new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
-                    return;
+                if(CheckConnecttion()) {
+                    Intent Order = new Intent(MainActivity.this, TrackingFailActivity.class);
+                    startActivity(Order);
                 }
-
-                Intent Order = new Intent(MainActivity.this, TrackingFailActivity.class);
-                startActivity(Order);
             }
         });
 
@@ -145,6 +121,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(Order);
             }
         });
+    }
+
+    private boolean CheckConnecttion(){
+        SettingDefault();
+
+        if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
+            new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระบุหมายเลข TSport ID ที่ การตั้งค่า", true);
+            return false;
+        }
+
+        if(SettingActivity.APIKEY == null || SettingActivity.APIKEY.equals(""))
+        {
+            new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "TSport ID ไม่ถูกต้อง \nตรวจสอบการเชื่อมต่ออินเตอร์เน็ต", true);
+            return false;
+        }
+
+        if (!SettingActivity.TSPORTENABLE.equals("1")) {
+            new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระงับการใช้งาน ติดต่อผู้พัฒนา", true);
+            return false;
+        }
+
+        return true;
     }
 
     private void SettingDefault() {
@@ -187,12 +185,16 @@ public class MainActivity extends AppCompatActivity {
                     SettingActivity.EMAIL = dataSnapshot.child("EMAIL").getValue(String.class);
                     SettingActivity.TSPORTENABLE = dataSnapshot.child("TSPORTENABLE").getValue(String.class);
 
+                    SettingActivity.SCGEXENABLE = dataSnapshot.child("SCGEXENABLE").getValue(String.class);
+                    SettingActivity.DHLENABLE = dataSnapshot.child("DHLENABLE").getValue(String.class);
+
                     DataSnapshot DHLSnp = dataSnapshot.child("DHL");
 
                     SettingActivity.DHLID = DHLSnp.child("DHLID").getValue().toString();
                     SettingActivity.URLLABEL = DHLSnp.child("URLLABEL").getValue().toString();
                     SettingActivity.URLTOKEN = DHLSnp.child("URLTOKEN").getValue().toString();
                     SettingActivity.URLTRACKING = DHLSnp.child("URLTRACKING").getValue().toString();
+                    SettingActivity.URLREPRINT = DHLSnp.child("URLREPRINT").getValue().toString();
                     SettingActivity.customerAccountId = DHLSnp.child("customerAccountId").getValue().toString();
                     SettingActivity.handoverMethod = DHLSnp.child("handoverMethod").getValue().toString();
                     SettingActivity.inlineLabelReturn = DHLSnp.child("inlineLabelReturn").getValue().toString();
@@ -205,7 +207,8 @@ public class MainActivity extends AppCompatActivity {
                     SettingActivity.pickupAddress = jsonAd.toString();
 
                     DataSnapshot DHLLabel = DHLSnp.child("label");
-                    Map<String, String> Lebel = (Map<String, String>) DHLLabel.getValue();                   JSONObject json = new JSONObject(Lebel);
+                    Map<String, String> Lebel = (Map<String, String>) DHLLabel.getValue();
+                    JSONObject json = new JSONObject(Lebel);
                     SettingActivity.label = json.toString();
 
 
