@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -39,14 +40,22 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
+import wirat.transreceive.CallService.AsyncTaskCompleteListener;
+import wirat.transreceive.CallService.asyCallServiceAPIRestFulProcessDHLToken;
 import wirat.transreceive.DataBaseHelper.DBClass;
+import wirat.transreceive.DataClass.bookingResponseObject;
 import wirat.transreceive.Order.OrderActivity;
+import wirat.transreceive.Order.PriceListActivity;
 import wirat.transreceive.Tracking.TrakingActivity;
 import wirat.transreceive.TrackingFail.TrackingFailActivity;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ProgressDialog mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +79,31 @@ public class MainActivity extends AppCompatActivity {
         };
         hasPermissions(this, PERMISSIONS);
 
+        DBClass mHelper = new DBClass(MainActivity.this);
+        SQLiteDatabase mDb = mHelper.getWritableDatabase();
+        Cursor mCursor = mDb.rawQuery("SELECT * FROM " + DBClass.TABLE_SETTING, null);
+
+        mCursor.moveToPosition(0);
+        SettingActivity.BTADDRESS = mCursor.getString(mCursor.getColumnIndex(DBClass.TABLE_SETTING_BTADDRESS));
+        SettingActivity.BTTYPE = mCursor.getString(mCursor.getColumnIndex(DBClass.TABLE_SETTING_BTTYPE));
+
         Button BtnOrder = (Button) findViewById(R.id.BtnOrder);
         Button BtnTracking = (Button) findViewById(R.id.BtnTracking);
         Button BtnSetting = (Button) findViewById(R.id.BtnSetting);
         Button BtnTrackingFail = (Button) findViewById(R.id.BtnTrackingFail);
 
-        SettingDefault();
+        mProgress = ProgressDialog.show(MainActivity.this,"", "loading");
+
+        //start a new thread to process job
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(!CheckConnecttion());
+                    CheckConnecttion();
+            }
+        }).start();
+
+
 
         BtnOrder.setOnClickListener(new View.OnClickListener() {
 
@@ -124,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean CheckConnecttion(){
+
         SettingDefault();
 
         if (SettingActivity.BTTYPE == null || SettingActivity.BTTYPE.equals("")) {
@@ -137,8 +166,13 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!SettingActivity.TSPORTENABLE.equals("1")) {
+        if (SettingActivity.TSPORTENABLE == null || !SettingActivity.TSPORTENABLE.equals("1")) {
             new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ระงับการใช้งาน ติดต่อผู้พัฒนา", true);
+            return false;
+        }
+
+        if (SettingActivity.TOKENDATE == null || SettingActivity.TOKENTMP == null) {
+            new AlertDialogManager().showAlertDialog(MainActivity.this, "Error", "ไม่พบบริการ DHL", true);
             return false;
         }
 
@@ -147,15 +181,38 @@ public class MainActivity extends AppCompatActivity {
 
     private void SettingDefault() {
 
-        DBClass mHelper = new DBClass(MainActivity.this);
-        SQLiteDatabase mDb = mHelper.getWritableDatabase();
-        Cursor mCursor = mDb.rawQuery("SELECT * FROM " + DBClass.TABLE_SETTING, null);
-
-        mCursor.moveToPosition(0);
-        SettingActivity.BTADDRESS = mCursor.getString(mCursor.getColumnIndex(DBClass.TABLE_SETTING_BTADDRESS));
-        SettingActivity.BTTYPE = mCursor.getString(mCursor.getColumnIndex(DBClass.TABLE_SETTING_BTTYPE));
-
         FirebaseCheckVersion();
+
+        SimpleDateFormat Inv = new SimpleDateFormat("yyMMdd");
+        final SimpleDateFormat Invf = Inv;
+        if(SettingActivity.TOKENDATE.equals("") || SettingActivity.TOKENDATE.equals("") || !SettingActivity.TOKENDATE.equals(Inv.format(new Date())))
+        {
+            final asyCallServiceAPIRestFulProcessDHLToken UpVisit = new asyCallServiceAPIRestFulProcessDHLToken(MainActivity.this, new AsyncTaskCompleteListener<JSONObject>() {
+                @Override
+                public void onTaskComplete(JSONObject result) {
+                    if (result == null) {
+                        new AlertDialogManager().showAlertDialog(MainActivity.this, "ผิดพลาด ", "ไม่พบการส่งคืนค่ากลับ", true);
+                        return;
+                    }
+                    try {
+                        JSONObject IdTok = result.getJSONObject("accessTokenResponse");
+                        String Token = IdTok.getString("token");
+                        if(Token.equals("")) {
+                            SettingActivity.TOKENDATE = Invf.format(new Date());
+                            SettingActivity.TOKENTMP = Token;
+                            DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+                            mRootRef.child("USERCHILDID/" + SettingActivity.BTTYPE + "/TSPCHDETAIL/DHL/TOKENDATE/").setValue(SettingActivity.TOKENDATE);
+                            mRootRef.child("USERCHILDID/" + SettingActivity.BTTYPE + "/TSPCHDETAIL/DHL/TOKENTMP/").setValue(SettingActivity.TOKENTMP);
+                        }else{
+                            new AlertDialogManager().showAlertDialog(MainActivity.this, "ผิดพลาด ", "DHL ไม่สามารถใช้งานได้", true);
+                        }
+                    } catch (Exception e) {
+                        new AlertDialogManager().showAlertDialog(MainActivity.this, "ผิดพลาด ", e.getMessage(), true);
+                    }
+                }
+            });
+            UpVisit.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     public void hasPermissions(Context context, String... permissionsAll) {
@@ -195,11 +252,12 @@ public class MainActivity extends AppCompatActivity {
                     SettingActivity.URLTOKEN = DHLSnp.child("URLTOKEN").getValue().toString();
                     SettingActivity.URLTRACKING = DHLSnp.child("URLTRACKING").getValue().toString();
                     SettingActivity.URLREPRINT = DHLSnp.child("URLREPRINT").getValue().toString();
-                    SettingActivity.customerAccountId = DHLSnp.child("customerAccountId").getValue().toString();
-                    SettingActivity.handoverMethod = DHLSnp.child("handoverMethod").getValue().toString();
                     SettingActivity.inlineLabelReturn = DHLSnp.child("inlineLabelReturn").getValue().toString();
                     SettingActivity.pickupAccountId = DHLSnp.child("pickupAccountId").getValue().toString();
                     SettingActivity.soldToAccountId = DHLSnp.child("soldToAccountId").getValue().toString();
+
+                    SettingActivity.TOKENDATE = DHLSnp.child("TOKENDATE").getValue().toString();
+                    SettingActivity.TOKENTMP = DHLSnp.child("TOKENTMP").getValue().toString();
 
                     DataSnapshot DHLPkAd = DHLSnp.child("pickupAddress");
                     Map<String, String> LebelAd = (Map<String, String>) DHLPkAd.getValue();
@@ -228,67 +286,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Log.d("TEST Firebase", "เพิ่มแล้ว");
-
-    }
-
-    ProgressDialog Helper;
-
-    private void downloadInLocalFile() {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference imageRef = storageRef.child("TSport/TSport.apk");
-
-        Log.d("TEST Firebase", imageRef.getPath());
-
-        File dir = new File(Environment.getExternalStorageDirectory().toString());
-        final File file = new File(dir, "TSport.apk");
-        try {
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        final FileDownloadTask fileDownloadTask = imageRef.getFile(file);
-        Helper = new ProgressDialog(MainActivity.this);
-        Helper.setTitle("Download");
-        Helper.setMessage("Updating App Version, Please Wait!");
-        Helper.setIndeterminate(false);
-        Helper.setMax(100);
-        Helper.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        // Show ProgressBar
-        Helper.setCancelable(false);
-        Helper.show();
-
-        fileDownloadTask.addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Helper.dismiss();
-                Intent install = new Intent(Intent.ACTION_VIEW);
-                Uri uri = Uri.fromFile(file);
-                install.setDataAndType(uri, "application/vnd.android.package-archive");
-                startActivity(install);
-
-                MainActivity.this.finish();
-                finish();
-                Log.d("TEST Firebase", "onSuccess..");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Helper.dismiss();
-                Log.d("TEST Firebase", "Fail..");
-            }
-        }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                int progress = (int) ((100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                Helper.setProgress(progress);
-                Log.d("TEST Firebase", "Wait..");
-            }
-        });
-
 
     }
 }

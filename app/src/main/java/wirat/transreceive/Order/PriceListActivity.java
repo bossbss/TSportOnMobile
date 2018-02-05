@@ -61,7 +61,7 @@ public class PriceListActivity extends AppCompatActivity {
         if (ArryPrice != null) {
             /**DHL***/
             try {
-                if(SettingActivity.DHLENABLE.equals("1")) {
+                if(SettingActivity.DHLENABLE.equals("1") && (PriceListActivity.UpDatePriceList("DHL") != 0)) {
                     JSONObject DHLitem = new JSONObject();
                     DHLitem.put("courier_code", "DHL");
                     DHLitem.put("price", 0);
@@ -74,7 +74,7 @@ public class PriceListActivity extends AppCompatActivity {
                     ArryPrice.put(DHLitem);
                 }
 
-                if(SettingActivity.SCGEXENABLE.equals("1")) {
+                if(SettingActivity.SCGEXENABLE.equals("1") && (PriceListActivity.UpDatePriceList("SCGEX") != 0)) {
                     JSONObject SCGEXitem = new JSONObject();
                     SCGEXitem.put("courier_code", "SCGEX");
                     SCGEXitem.put("price", 0);

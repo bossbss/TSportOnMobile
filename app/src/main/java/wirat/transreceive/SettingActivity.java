@@ -51,13 +51,14 @@ public class SettingActivity extends AppCompatActivity {
     public static String URLTOKEN = "";
     public static String URLTRACKING = "";
     public static String URLREPRINT = "";
-    public static String customerAccountId = "";
-    public static String handoverMethod = "";
     public static String inlineLabelReturn = "";
     public static String label = "";
     public static String pickupAccountId = "";
     public static String pickupAddress = "";
     public static String soldToAccountId = "";
+
+    public static String TOKENDATE = "";
+    public static String TOKENTMP = "";
 
 
     EditText BtNamae,BtAddress,TSportId;

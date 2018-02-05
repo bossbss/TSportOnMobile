@@ -101,12 +101,11 @@ public class asyCallServiceAPIRestFulProcessDHL extends AsyncTask<Void, Void, JS
                     "\t\t\t\"messageLanguage\": \"th_TH\"\n" +
                     "\t\t},\n" +
                     "\t\t\"bd\": {\n" +
-                    "\t\t\t\"customerAccountId\": "+SettingActivity.customerAccountId+",\n" +
+                    "\t\t\t\"customerAccountId\": null,\n" +
                     "\t\t\t\"pickupAccountId\": \""+SettingActivity.pickupAccountId+"\",\n" +
                     "\t\t\t\"soldToAccountId\": \""+SettingActivity.soldToAccountId+"\",\n" +
                     "\t\t\t\"pickupDateTime\": \""+currentDateandTime+"\",\n" +
                     "\t\t\t\"inlineLabelReturn\": \""+SettingActivity.inlineLabelReturn+"\",\n" +
-                    "\t\t\t\"handoverMethod\": "+SettingActivity.handoverMethod+",\n" +
                     "\t\t\t\"pickupAddress\": "+SettingActivity.pickupAddress+",\n" +
                     "\t\t\t\"shipperAddress\": {\n" +
                     "\t\t\t\t\"name\": \""+ParamiterValuse.get("data[0][from][name]")+"\",\n" +
@@ -143,7 +142,6 @@ public class asyCallServiceAPIRestFulProcessDHL extends AsyncTask<Void, Void, JS
                     "\t\t\t\t\t\"customerReference1\": null,\n" +
                     "\t\t\t\t\t\"customerReference2\": null,\n" +
                     "\t\t\t\t\t\"productCode\": \"PDO\",\n" +
-                    "\t\t\t\t\t\"incoterm\": \"DDP\",\n" +
                     "\t\t\t\t\t\"contentIndicator\": null,\n" +
                     "\t\t\t\t\t\"codValue\": null,\n" +
                     "\t\t\t\t\t\"insuranceValue\": null,\n" +

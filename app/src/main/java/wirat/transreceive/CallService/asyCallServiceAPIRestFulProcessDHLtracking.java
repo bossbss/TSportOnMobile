@@ -97,7 +97,7 @@ public class asyCallServiceAPIRestFulProcessDHLtracking extends AsyncTask<Void, 
                     "            \"messageLanguage\": \"th_TH\"\n" +
                     "        },\n" +
                     "        \"bd\": {\n" +
-                    "            \"customerAccountId\": "+SettingActivity.customerAccountId+",\n" +
+                    "            \"customerAccountId\": null,\n" +
                     "            \"soldToAccountId\": \""+SettingActivity.soldToAccountId+"\",\n" +
                     "            \"pickupAccountId\": \""+SettingActivity.pickupAccountId+"\",\n" +
                     "            \"trackingReferenceNumber\": [\n" +
